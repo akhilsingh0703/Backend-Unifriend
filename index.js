@@ -19,7 +19,10 @@ app.use('/api/universities', universityRoutes);
 
 // Health check endpoint (required for Render)
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'healthy' });
+  res.json({
+    status: "ok",
+    message: "Backend is running 🚀"
+  });
 });
 
 app.get('/', (req, res) => {
