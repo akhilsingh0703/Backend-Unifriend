@@ -5,10 +5,19 @@ const { validationResult } = require('express-validator');
 const twilio = require('twilio');
 
 // Initialize Twilio client
-const twilioClient = twilio(
-  process.env.TWILIO_ACCOUNT_SID,
-  process.env.TWILIO_AUTH_TOKEN
-);
+let twilioClient;
+try {
+  if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+    twilioClient = twilio(
+      process.env.TWILIO_ACCOUNT_SID,
+      process.env.TWILIO_AUTH_TOKEN
+    );
+  } else {
+    console.warn('Twilio credentials missing. SMS features will not work.');
+  }
+} catch (error) {
+  console.warn('Twilio initialization failed:', error.message);
+}
 
 class AuthController {
   // Login user
@@ -24,8 +33,8 @@ class AuthController {
 
       // Check if using email/password or phone/otp
       if ((!email || !password) && (!phoneNumber || !otp)) {
-        return res.status(400).json({ 
-          message: 'Either email/password or phone/OTP is required' 
+        return res.status(400).json({
+          message: 'Either email/password or phone/OTP is required'
         });
       }
 
@@ -72,7 +81,7 @@ class AuthController {
   static async generateOTP(phoneNumber) {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const ttl = 5 * 60 * 1000; // 5 minutes
-    
+
     await db.collection('otpVerifications').doc(phoneNumber).set({
       otp,
       expiresAt: Date.now() + ttl
@@ -93,13 +102,13 @@ class AuthController {
   // Verify OTP
   static async verifyOTP(phoneNumber, otp) {
     const otpDoc = await db.collection('otpVerifications').doc(phoneNumber).get();
-    
+
     if (!otpDoc.exists) {
       throw new Error('OTP not found or expired');
     }
 
     const { otp: storedOTP, expiresAt } = otpDoc.data();
-    
+
     if (Date.now() > expiresAt) {
       await otpDoc.ref.delete();
       throw new Error('OTP expired');
@@ -269,10 +278,10 @@ class AuthController {
       }
 
       const otp = await AuthController.generateOTP(phoneNumber);
-      
+
       // In development, return the OTP for testing
       if (process.env.NODE_ENV !== 'production') {
-        return res.json({ 
+        return res.json({
           message: 'OTP sent successfully',
           otp // Only for development/testing
         });
@@ -295,11 +304,11 @@ class AuthController {
       }
 
       await AuthController.verifyOTP(phoneNumber, otp);
-      
+
       // Update user's phone verification status
       const usersRef = db.collection('users');
       const userQuery = await usersRef.where('phoneNumber', '==', phoneNumber).get();
-      
+
       if (!userQuery.empty) {
         const userDoc = userQuery.docs[0];
         await userDoc.ref.update({
@@ -319,16 +328,16 @@ class AuthController {
   static async getCurrentUser(req, res) {
     try {
       const userDoc = await db.collection('users').doc(req.user.userId).get();
-      
+
       if (!userDoc.exists) {
         return res.status(404).json({ message: 'User not found' });
       }
 
       const user = userDoc.data();
-      
+
       // Don't send sensitive data
       const { password, ...userData } = user;
-      
+
       res.json({
         ...userData,
         id: userDoc.id
