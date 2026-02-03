@@ -29,6 +29,10 @@ app.get('/', (req, res) => {
   res.send('unifriend run');
 });
 
-app.listen(port, '0.0.0.0', () => {  // Listen on all network interfaces
-  console.log(`Server is running on port ${port}`);
-});
+if (require.main === module) {
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+}
+
+module.exports = app;
