@@ -16,8 +16,17 @@ app.use(cors());
 app.use(express.json());
 
 // API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/universities', universityRoutes);
+// app.use('/api/auth', authRoutes);
+// app.use('/api/universities', universityRoutes);
+
+// Global Error Handlers for debugging
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('UNHANDLED REJECTION:', reason);
+});
 
 
 // Health check endpoint (required for Render)
