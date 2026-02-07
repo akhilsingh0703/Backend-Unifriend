@@ -1,46 +1,51 @@
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
 }
-const express = require('express');
-console.log('Initializing backend application...');
-const cors = require('cors');
-const path = require('path');
+
+const express = require("express");
+const cors = require("cors");
+
+console.log("Initializing backend application...");
+
 const app = express();
 const port = process.env.PORT || 3001;
 
+// 🔥 IMPORTANT: initialize Firebase ONCE
+require("./firebase");
+
 // Import routes
-const authRoutes = require('./routes/auth');
-const universityRoutes = require('./routes/universities');
+const authRoutes = require("./routes/auth");
+const universityRoutes = require("./routes/universities");
 
 app.use(cors());
 app.use(express.json());
 
 // API routes
-// app.use('/api/auth', authRoutes);
-// app.use('/api/universities', universityRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/universities", universityRoutes);
 
-// Global Error Handlers for debugging
-process.on('uncaughtException', (err) => {
-  console.error('UNCAUGHT EXCEPTION:', err);
+// Global error handlers (good, keep them)
+process.on("uncaughtException", (err) => {
+  console.error("UNCAUGHT EXCEPTION:", err);
 });
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('UNHANDLED REJECTION:', reason);
+process.on("unhandledRejection", (reason) => {
+  console.error("UNHANDLED REJECTION:", reason);
 });
 
-
-// Health check endpoint (required for Render)
-app.get('/api/health', (req, res) => {
+// Health check
+app.get("/api/health", (req, res) => {
   res.json({
     status: "ok",
-    message: "Backend is running 🚀"
+    message: "Backend is running 🚀",
   });
 });
 
-app.get('/', (req, res) => {
-  res.send('unifriend run');
+app.get("/", (req, res) => {
+  res.send("unifriend run");
 });
 
+// Only listen locally (NOT on Vercel)
 if (require.main === module) {
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
