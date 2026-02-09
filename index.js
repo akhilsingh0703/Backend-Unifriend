@@ -22,11 +22,7 @@ app.use(express.json());
 
 app.get("/universities", (req, res) => {
   res.json([
-    {
-      id: 1,
-      name: "Demo University",
-      city: "Test City"
-    }
+    { id: 1, name: "UniFriend Test University", city: "Patna" }
   ]);
 });
 
@@ -55,11 +51,14 @@ app.get("/", (req, res) => {
   res.json({ status: "Backend running" });
 });
 
+/* 
 // Only listen locally (NOT on Vercel)
+// User requested removal for Vercel compatibility
 if (require.main === module) {
   app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
   });
 }
+*/
 
 module.exports = app;
