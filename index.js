@@ -42,7 +42,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("unifriend run");
+  res.json({ status: "Backend running" });
 });
 
 // Only listen locally (NOT on Vercel)
