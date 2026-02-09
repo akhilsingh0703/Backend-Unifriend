@@ -20,6 +20,16 @@ const universityRoutes = require("./routes/universities");
 app.use(cors());
 app.use(express.json());
 
+app.get("/universities", (req, res) => {
+  res.json([
+    {
+      id: 1,
+      name: "Demo University",
+      city: "Test City"
+    }
+  ]);
+});
+
 // API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/universities", universityRoutes);
