@@ -20,11 +20,12 @@ const universityRoutes = require("./routes/universities");
 app.use(cors());
 app.use(express.json());
 
-app.get("/universities", (req, res) => {
-  res.json([
-    { id: 1, name: "UniFriend Test University", city: "Patna" }
-  ]);
-});
+// Route removed locally to avoid conflict. 
+// app.get("/universities", (req, res) => {
+//   res.json([
+//     { id: 1, name: "UniFriend Test University", city: "Patna" }
+//   ]);
+// });
 
 // API routes
 app.use("/api/auth", authRoutes);

@@ -7,8 +7,8 @@ class UniversityController {
       // Hardcoded university data
       const universities = [
         {
-          "id": "chandigarh-university",
-          "name": "Chandigarh University",
+          "id": "chandigarh-university-test",
+          "name": "Chandigarh University Test",
           "location": {
             "city": "Mohali",
             "state": "Punjab"
