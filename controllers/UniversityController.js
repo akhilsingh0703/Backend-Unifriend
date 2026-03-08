@@ -1,7 +1,5 @@
-const admin = require("firebase-admin");
+const admin = require("../firebase");
 const db = admin.firestore();
-// const { db } = require('../firebase');
-
 class UniversityController {
   // Get all universities
   static async getAllUniversities(req, res) {
